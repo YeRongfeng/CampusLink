@@ -18,30 +18,17 @@ npm --prefix frontend ci
 
 ### 2. 配置数据库
 
-启动本机 MySQL，在项目根目录打开 MySQL 客户端：
+本机 MySQL 服务启动后，执行：
 
 ```powershell
-mysql -u root -p
+backend/.venv/Scripts/python.exe database/setup.py
 ```
 
-执行初始化后退出客户端：
+在终端输入 MySQL 管理账号密码，脚本自动执行建库建表 SQL、创建项目专用账号，并生成 `backend/.env` 和随机 JWT 密钥，无需复制或编辑文件。默认使用本机 3306 端口和 root 管理账号；其他配置可用 `--host`、`--port`、`--user` 指定。
 
-```sql
-SOURCE database/init.sql;
-EXIT;
-```
+已有 `.env` 时只检查连接和用户表，不覆盖配置或数据。
 
-将 `backend/.env.example` 复制为 `backend/.env`（已有配置不覆盖），填写数据库地址、数据库名、用户名和密码。数据库账号需有 `campuslink` 库的读写权限。
-
-运行下面命令，将生成的内容填入 `.env` 的 `JWT_SECRET`：
-
-```powershell
-backend/.venv/Scripts/python.exe -c "import secrets; print(secrets.token_urlsafe(48))"
-```
-
-初始化 SQL 可重复执行，不删除已有数据；应用不会自动建表。
-
-> 如果本机已通过项目附带的 `database/local_mysql.py` 配好 MySQL，直接运行 `backend/.venv/Scripts/python.exe database/local_mysql.py start` 即可，无需重新初始化或覆盖 `.env`。该方式依赖本机 `.local/` 中已有的 MySQL，其他组员需自行安装 MySQL。
+> 如果这台电脑使用项目附带的本地 MySQL，先运行 `backend/.venv/Scripts/python.exe database/local_mysql.py start`。其他电脑使用自己已安装的 MySQL 服务即可。
 
 ### 3. 启动
 

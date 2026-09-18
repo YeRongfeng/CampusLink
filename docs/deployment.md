@@ -6,7 +6,7 @@
 
 ## 已有公共配置与本地启动
 
-后端使用 `backend/.env`，由 `.env.example` 复制后填写：
+后端使用 `backend/.env`。首次运行 `database/setup.py`，在终端输入 MySQL 管理账号密码，脚本执行初始化 SQL，创建仅有项目库读写权限的本地应用账号，并自动写入以下配置：
 
 | 变量 | 含义 |
 | --- | --- |
@@ -15,9 +15,9 @@
 | DATABASE_USER / DATABASE_PASSWORD | 对项目库有读写权限的数据库账号 |
 | JWT_SECRET | 随机生成且至少 32 字符，拒绝示例占位值 |
 
-不要覆盖同学已有 `.env`；真实密码、密钥不得提交仓库。前端默认无需配置，若修改后端端口，参照 `frontend/.env.example` 设置 `BACKEND_PROXY_TARGET` 并重启前端；VITE_ 变量会暴露给浏览器，不存凭据。
+已有 `.env` 时脚本只检查连接和用户表，不覆盖配置。真实密码、密钥不提交仓库。前端默认无需配置，若修改后端端口，参照 `frontend/.env.example` 设置 `BACKEND_PROXY_TARGET` 并重启前端；VITE_ 变量会暴露给浏览器，不存凭据。
 
-启动顺序：MySQL → 执行 `database/init.sql`（首次或需要补建表时）→ FastAPI → Vite。健康检查 `/api/health` 返回 200 表示数据库可连，API 文档位于 `/docs`。终端中按 Ctrl+C 停止前后端。
+启动顺序：MySQL → 首次执行 `database/setup.py` → FastAPI → Vite。健康检查 `/api/health` 返回 200 表示数据库可连，API 文档位于 `/docs`。终端中按 Ctrl+C 停止前后端。
 
 使用项目本地 MySQL 脚本的电脑可在根目录执行 `backend/.venv/Scripts/python.exe database/local_mysql.py start` 或 `stop`。脚本依赖 `.local/mysql-8.4.11-winx64/`，不会随 Git 克隆；普通 MySQL 安装不需要此脚本。不要对已有环境重复执行 setup。
 
@@ -49,7 +49,7 @@ mysqldump -u <数据库账号> -p --single-transaction --no-tablespaces --set-gt
 
 交付包应包含源代码、锁文件、配置示例、完整数据库 SQL 和文档；不附带真实凭据、node_modules、虚拟环境或 MySQL 数据目录。全组业务完成后按课程要求以组长学号命名归档文件。
 
-## 模块部署补充（各模块负责人填写）
+## 业务模块运行配置
 
 | 模块 | 新增依赖与环境变量 | 初始化 SQL / 数据 | 文件目录及维护事项 |
 | --- | --- | --- | --- |
@@ -57,7 +57,7 @@ mysqldump -u <数据库账号> -p --single-transaction --no-tablespaces --set-gt
 | 校园悬赏 | 待确认；无新增则写“无” | 待补充 | 待补充 |
 | 二手书 | 待确认；无新增则写“无” | 待补充 | 待补充 |
 
-## 全系统交付部署（集成负责人补充）
+## 最终部署环境
 
 待确定最终运行环境、实际端口与访问地址、完整初始化顺序、前端静态资源及接口转发、启动停止方法、日志位置，以及更新和回退步骤。按实际部署环境填写，不默认必须上云。
 
