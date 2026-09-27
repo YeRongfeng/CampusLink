@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': { target, changeOrigin: true },
         '/uploads': { target, changeOrigin: true },
+        '/_AMapService': { target, changeOrigin: true },
       },
     },
   }

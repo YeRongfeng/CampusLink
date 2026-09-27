@@ -67,7 +67,9 @@ Content-Type: application/json
 
 ### 校园拼车
 
-接口前缀为 `/api/rides`。页面、处理流程和接口明细待补充。
+接口前缀为 `/api/rides`。提供列表、发布、我的行程、详情、编辑、membership、contacts、join、leave、cancel、complete。实际请求模型与响应见运行服务的 `/docs`；详细约定见 [拼车计划](ride-plan.md)。
+
+后端 `schemas.py` 校验输入，`service.py` 实现事务、状态转换、计数和联系权限，`router.py` 沿用统一认证与响应。前端 RideList、Edit、Detail 复用公共布局及绿色主题；LocationPicker 统一三个地点编辑，RideMap 展示详情地点。高德 JS API 经同源 `/_AMapService` 固定路径代理补充安全密钥，未配置时手动输入兜底。
 
 ### 校园悬赏
 

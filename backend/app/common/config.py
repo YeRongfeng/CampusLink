@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     database_user: str = 'campuslink'
     database_password: SecretStr
     jwt_secret: SecretStr
+    amap_security_code: SecretStr = SecretStr('')
 
     @field_validator('jwt_secret')
     @classmethod

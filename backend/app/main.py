@@ -16,6 +16,7 @@ from app.auth.router import router as auth_router
 from app.user.router import router as user_router
 from app.files.router import UPLOAD_DIR, router as file_router
 from app.modules.ride.router import router as ride_router
+from app.modules.ride.map_proxy import router as map_router
 from app.modules.quest.router import router as quest_router
 from app.modules.book.router import router as book_router
 
@@ -33,6 +34,7 @@ app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(file_router)
 app.include_router(ride_router)
+app.include_router(map_router)
 app.include_router(quest_router)
 app.include_router(book_router)
 app.mount('/uploads', StaticFiles(directory=UPLOAD_DIR, check_dir=False), name='uploads')

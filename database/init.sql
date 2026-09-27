@@ -15,6 +15,50 @@ CREATE TABLE IF NOT EXISTS `user` (
     UNIQUE KEY uq_user_username (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Ride Module
+CREATE TABLE IF NOT EXISTS ride_trip (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	owner_id BIGINT NOT NULL,
+	origin VARCHAR(80) NOT NULL,
+	destination VARCHAR(80) NOT NULL,
+	meeting_point VARCHAR(160) NOT NULL,
+	origin_location JSON,
+	destination_location JSON,
+	meeting_location JSON,
+	meeting_note VARCHAR(200) NOT NULL,
+	departure_at DATETIME(6) NOT NULL,
+	recruit_seats SMALLINT NOT NULL,
+	estimated_cost NUMERIC(8, 2),
+	contact_type VARCHAR(16) NOT NULL,
+	contact_value VARCHAR(64) NOT NULL,
+	note VARCHAR(500) NOT NULL,
+	status VARCHAR(16) NOT NULL,
+	created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+	updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+	PRIMARY KEY (id),
+	CONSTRAINT ck_ride_seats CHECK (recruit_seats BETWEEN 1 AND 6),
+	CONSTRAINT ck_ride_status CHECK (status IN ('scheduled','cancelled','completed')),
+	CONSTRAINT ck_ride_cost CHECK (estimated_cost IS NULL OR estimated_cost BETWEEN 0 AND 9999.99),
+	FOREIGN KEY(owner_id) REFERENCES user (id) ON DELETE RESTRICT,
+    INDEX ix_ride_departure (status, departure_at, id),
+    INDEX ix_ride_owner (owner_id, created_at, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS ride_member (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	trip_id BIGINT NOT NULL,
+	user_id BIGINT NOT NULL,
+	status VARCHAR(16) NOT NULL,
+	contact_type VARCHAR(16) NOT NULL,
+	contact_value VARCHAR(64) NOT NULL,
+	created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+	updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+	PRIMARY KEY (id),
+	CONSTRAINT uq_ride_member UNIQUE (trip_id, user_id),
+	CONSTRAINT ck_ride_member_status CHECK (status IN ('joined','withdrawn')),
+	FOREIGN KEY(trip_id) REFERENCES ride_trip (id) ON DELETE RESTRICT,
+	FOREIGN KEY(user_id) REFERENCES user (id) ON DELETE RESTRICT,
+    INDEX ix_ride_members (trip_id, status),
+    INDEX ix_ride_member_user (user_id, created_at, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 -- Quest Module
 -- Book Module

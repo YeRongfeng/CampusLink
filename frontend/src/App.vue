@@ -9,7 +9,7 @@ import { theme } from './theme'
   <NConfigProvider :locale="zhCN" :date-locale="dateZhCN" :theme-overrides="theme">
     <NGlobalStyle />
     <NMessageProvider>
-      <RequestFeedback><AppHeader /><RouterView /></RequestFeedback>
+      <RequestFeedback><AppHeader /><RouterView :key="$route.path" /></RequestFeedback>
     </NMessageProvider>
   </NConfigProvider>
 </template>

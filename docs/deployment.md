@@ -51,9 +51,30 @@ mysqldump -u <数据库账号> -p --single-transaction --no-tablespaces --set-gt
 
 ## 业务模块运行配置
 
+### 拼车升级与高德地图
+
+已有公共框架数据库在项目根目录执行：
+
+```powershell
+backend/.venv/Scripts/python.exe database/migrate_ride.py
+```
+
+脚本仅创建缺失的 `ride_trip`、`ride_member`，不会清空用户或业务数据；重复执行不会重复建表。它不会自动修复已有但结构不同的表。新数据库的 `init.sql` 已包含这两张表。
+
+本机已配置环境可双击根目录 `start.cmd`，服务地址为 http://127.0.0.1:5173，日志在 `.local/`。启动器检查端口和健康状态，不自动更新旧数据库。
+
+地图可选，未配置时手动填写三个地点仍可发布和报名。启用步骤：
+
+1. 在高德控制台申请 Web 端（JS API）Key 及其对应安全密钥，按控制台要求配置实际访问域名。
+2. 在 `frontend/.env` 设置 `VITE_AMAP_KEY=你的Key`、`VITE_AMAP_SERVICE_HOST=/_AMapService`。
+3. 在 `backend/.env` 设置 `AMAP_SECURITY_CODE=对应安全密钥`。不要放到前端变量、代码或仓库中。
+4. 重启前后端。进入发布页点击“地图选点”，验证搜索、点击选点、定位和保存回显。定位由用户主动点击并授权；远程浏览器部署应使用 HTTPS，本机可使用 localhost 安全上下文。
+
+`/_AMapService/status` 只返回是否配置，不能证明 Key、域名和配额有效。代理只允许固定高德 REST 路径，不接受任意上游地址。地图 JS Key 会被浏览器读取，这是客户端 SDK 的配置；安全密钥由后端代理追加。生产静态托管需将 `/api`、`/uploads` 和 `/_AMapService` 转发到后端，不能只部署 dist。本机有效 Key 下地图、搜索、选点、地址解析及回填已通过联调；当前位置定位待用户授权验证。
+
 | 模块 | 新增依赖与环境变量 | 初始化 SQL / 数据 | 文件目录及维护事项 |
 | --- | --- | --- | --- |
-| 校园拼车 | 待确认；无新增则写“无” | 待补充 | 待补充 |
+| 校园拼车 | @amap/amap-jsapi-loader；可选地图变量见上文 | migrations/001_add_ride.sql | 地点、行程、成员和联系方式保存在 MySQL，无新增上传目录 |
 | 校园悬赏 | 待确认；无新增则写“无” | 待补充 | 待补充 |
 | 二手书 | 待确认；无新增则写“无” | 待补充 | 待补充 |
 
