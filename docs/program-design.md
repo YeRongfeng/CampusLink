@@ -77,7 +77,9 @@ Content-Type: application/json
 
 ### 二手书
 
-接口前缀为 `/api/books`。页面、处理流程和接口明细待补充。
+接口前缀为 `/api/books`。提供列表、发布、我的书籍（我发布的/我收藏的）、详情、编辑、relation（本人与该书籍的关系）、contact、favorite/unfavorite、reserve、unreserve、sold、remove。实际请求模型与响应见运行服务的 `/docs`；详细约定见 [二手书模块设计说明](book-plan.md)。
+
+后端 `schemas.py` 校验输入（含图片必须来自本站上传目录、原价不低于现价等规则），`service.py` 实现状态机、收藏并发处理、联系权限和浏览计数，`router.py` 沿用统一认证与响应。前端 `BookList.vue` 同时承载书摊与我的书籍的筛选、分页和卡片展示；`ImagePicker.vue` 提供多图上传、选封面与删除；`Detail.vue` 展示图片画廊并按关系加载联系方式。
 
 业务接口统一记录方法、路径、请求参数、返回数据、登录要求和错误状态，并给出请求与响应示例。涉及记录修改时，应说明归属权限和状态变化。
 

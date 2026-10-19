@@ -72,11 +72,21 @@ backend/.venv/Scripts/python.exe database/migrate_ride.py
 
 `/_AMapService/status` 只返回是否配置，不能证明 Key、域名和配额有效。代理只允许固定高德 REST 路径，不接受任意上游地址。地图 JS Key 会被浏览器读取，这是客户端 SDK 的配置；安全密钥由后端代理追加。生产静态托管需将 `/api`、`/uploads` 和 `/_AMapService` 转发到后端，不能只部署 dist。本机有效 Key 下地图、搜索、选点、地址解析及回填已通过联调；当前位置定位待用户授权验证。
 
+### 二手书升级
+
+已有公共框架数据库在项目根目录执行：
+
+```powershell
+backend/.venv/Scripts/python.exe database/migrate_book.py
+```
+
+脚本仅创建缺失的 `book_listing`、`book_favorite`，不会清空用户或业务数据；重复执行不会重复建表。新数据库的 `init.sql` 已包含这两张表。二手书不依赖地图或其他外部服务，无新增环境变量；书籍图片复用公共 `backend/uploads/` 上传目录，无需单独的文件目录。
+
 | 模块 | 新增依赖与环境变量 | 初始化 SQL / 数据 | 文件目录及维护事项 |
 | --- | --- | --- | --- |
 | 校园拼车 | @amap/amap-jsapi-loader；可选地图变量见上文 | migrations/001_add_ride.sql | 地点、行程、成员和联系方式保存在 MySQL，无新增上传目录 |
 | 校园悬赏 | 待确认；无新增则写“无” | 待补充 | 待补充 |
-| 二手书 | 待确认；无新增则写“无” | 待补充 | 待补充 |
+| 二手书 | 无 | migrations/002_add_book.sql | 书籍、收藏和联系方式保存在 MySQL；书籍图片复用公共 uploads 目录，无新增上传目录 |
 
 ## 最终部署环境
 

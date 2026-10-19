@@ -61,4 +61,50 @@ CREATE TABLE IF NOT EXISTS ride_member (
     INDEX ix_ride_member_user (user_id, created_at, id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 -- Quest Module
--- Book Module
+
+CREATE TABLE IF NOT EXISTS book_listing (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	seller_id BIGINT NOT NULL,
+	title VARCHAR(120) NOT NULL,
+	author VARCHAR(80) NOT NULL,
+	isbn VARCHAR(20),
+	category VARCHAR(16) NOT NULL,
+	condition_grade VARCHAR(16) NOT NULL,
+	description VARCHAR(1000) NOT NULL,
+	cover_images JSON NOT NULL,
+	original_price NUMERIC(8, 2),
+	price NUMERIC(8, 2) NOT NULL,
+	is_negotiable TINYINT(1) NOT NULL DEFAULT 0,
+	trade_method VARCHAR(16) NOT NULL,
+	trade_location VARCHAR(160) NOT NULL,
+	contact_type VARCHAR(16) NOT NULL,
+	contact_value VARCHAR(64) NOT NULL,
+	status VARCHAR(16) NOT NULL DEFAULT 'listed',
+	view_count INT NOT NULL DEFAULT 0,
+	created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+	updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+	PRIMARY KEY (id),
+	CONSTRAINT ck_book_isbn CHECK (isbn IS NULL OR isbn REGEXP '^[0-9Xx-]{10,20}$'),
+	CONSTRAINT ck_book_category CHECK (category IN ('textbook','reference','exam','literature','other')),
+	CONSTRAINT ck_book_condition CHECK (condition_grade IN ('new','like_new','good','worn')),
+	CONSTRAINT ck_book_price CHECK (price BETWEEN 0 AND 9999.99),
+	CONSTRAINT ck_book_original_price CHECK (original_price IS NULL OR original_price BETWEEN 0 AND 9999.99),
+	CONSTRAINT ck_book_discount CHECK (original_price IS NULL OR original_price >= price),
+	CONSTRAINT ck_book_trade_method CHECK (trade_method IN ('meetup','delivery','either')),
+	CONSTRAINT ck_book_status CHECK (status IN ('listed','reserved','sold','removed')),
+	FOREIGN KEY(seller_id) REFERENCES user (id) ON DELETE RESTRICT,
+    INDEX ix_book_browse (status, category, created_at, id),
+    INDEX ix_book_seller (seller_id, created_at, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS book_favorite (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	listing_id BIGINT NOT NULL,
+	user_id BIGINT NOT NULL,
+	created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+	PRIMARY KEY (id),
+	CONSTRAINT uq_book_favorite UNIQUE (listing_id, user_id),
+	FOREIGN KEY(listing_id) REFERENCES book_listing (id) ON DELETE RESTRICT,
+	FOREIGN KEY(user_id) REFERENCES user (id) ON DELETE RESTRICT,
+    INDEX ix_book_favorite_user (user_id, created_at, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
