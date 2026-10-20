@@ -13,6 +13,7 @@ backend/uploads/
 *.log
 *.tsbuildinfo
 
-# 报告与交付产物仅保留在本地，不纳入版本库
-docs/交付文档/
-docs/设计报告-phase2.docx
+# 报告生成脚本与配图仅保留在本地；设计报告文档本身随仓库交付
+docs/交付文档/_report_helpers.py
+docs/交付文档/build_report.py
+docs/交付文档/assets/
