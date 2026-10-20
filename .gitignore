@@ -12,3 +12,7 @@ __pycache__/
 backend/uploads/
 *.log
 *.tsbuildinfo
+
+# 报告与交付产物仅保留在本地，不纳入版本库
+docs/交付文档/
+docs/设计报告-phase2.docx
