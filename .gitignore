@@ -9,6 +9,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+!frontend/.env.production
 backend/uploads/
 *.log
 *.tsbuildinfo
